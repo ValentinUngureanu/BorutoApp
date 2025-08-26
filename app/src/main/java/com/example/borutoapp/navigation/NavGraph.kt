@@ -9,18 +9,20 @@ import androidx.navigation.navArgument
 import com.example.borutoapp.util.Constants.DETAILS_ARGUMENT_KEY
 
 @Composable
-fun SetUpNavGraph(navController: NavHostController) {
+fun setUpNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = Screen.Splash.route,
     ) {
         composable(Screen.Welcome.route) {}
         composable(Screen.Home.route) {}
         composable(
             Screen.Details.route,
-            listOf(navArgument(DETAILS_ARGUMENT_KEY) {
-                type = NavType.IntType
-            })
+            listOf(
+                navArgument(DETAILS_ARGUMENT_KEY) {
+                    type = NavType.IntType
+                },
+            ),
         ) {}
         composable(Screen.Search.route) {}
     }

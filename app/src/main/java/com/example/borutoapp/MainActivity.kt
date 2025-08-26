@@ -6,11 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.borutoapp.navigation.SetUpNavGraph
+import com.example.borutoapp.navigation.setUpNavGraph
 import com.example.borutoapp.ui.theme.BorutoAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,10 +20,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             BorutoAppTheme {
                 navController = rememberNavController()
-                SetUpNavGraph(navController = navController)
-
+                setUpNavGraph(navController = navController)
             }
         }
     }
 }
-
