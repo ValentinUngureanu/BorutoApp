@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.borutoapp"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -22,7 +22,6 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                // pentru Room schema export (opțional)
                 arguments["room.schemaLocation"] = "$projectDir/schemas"
             }
         }
@@ -72,6 +71,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation(libs.ads.mobile.sdk)
     debugImplementation("androidx.compose.ui:ui-tooling")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -82,6 +82,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation("androidx.navigation:navigation-compose:2.9.0")
+
 
     // Room
     implementation("androidx.room:room-runtime:2.7.1")

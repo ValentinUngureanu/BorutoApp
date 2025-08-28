@@ -1,0 +1,10 @@
+root = true
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+
+# Permite PascalCase pentru Composables și Preview
+ktlint_function_naming_ignore_when_annotated_with = Composable,Preview
+
+# Permite virgule la final de listă
+ij_kotlin_allow_trailing_comma = true
