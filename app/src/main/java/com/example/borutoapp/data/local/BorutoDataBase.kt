@@ -4,14 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.borutoapp.data.local.dao.HeroDao
-import com.example.borutoapp.data.local.dao.HeroRemoteKeyDao
+import com.example.borutoapp.data.local.dao.HeroRemoteKeysDao
 import com.example.borutoapp.domain.model.Hero
-import com.example.borutoapp.domain.model.HeroRemoteKey
+import com.example.borutoapp.domain.model.HeroRemoteKeys
 
-@Database(entities = [Hero::class, HeroRemoteKey::class], version = 2, exportSchema = true)
+@Database(entities = [Hero::class, HeroRemoteKeys::class], version = 2, exportSchema = true)
 @TypeConverters(DatabaseConvertor::class)
 abstract class BorutoDataBase : RoomDatabase() {
     abstract fun heroDao(): HeroDao
 
-    abstract fun heroRemoteKeyDao(): HeroRemoteKeyDao
+    abstract fun heroRemoteKeysDao(): HeroRemoteKeysDao
 }
