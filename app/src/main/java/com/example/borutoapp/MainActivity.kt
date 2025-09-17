@@ -7,10 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.example.borutoapp.navigation.SetUpNavGraph
 import com.example.borutoapp.ui.theme.BorutoAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalCoilApi
 @OptIn(ExperimentalFoundationApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

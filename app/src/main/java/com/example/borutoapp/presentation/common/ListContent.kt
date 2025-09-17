@@ -3,17 +3,19 @@ package com.example.borutoapp.presentation.common
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -34,6 +36,7 @@ import com.example.borutoapp.R
 import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.navigation.Screen
 import com.example.borutoapp.presentation.components.RatingWidget
+import com.example.borutoapp.presentation.components.ShimmerEffect
 import com.example.borutoapp.ui.theme.HERO_ITEM_HEIGHT
 import com.example.borutoapp.ui.theme.LARGE_PADDING
 import com.example.borutoapp.ui.theme.MEDIUM_PADDING
@@ -41,15 +44,64 @@ import com.example.borutoapp.ui.theme.SMALL_PADDING
 import com.example.borutoapp.ui.theme.topAppBarContentColor
 import com.example.borutoapp.util.Constants.BASE_URL
 
+@ExperimentalCoilApi
 @Composable
 fun ListContent(
     heroes: LazyPagingItems<Hero>,
     navController: NavHostController,
+    modifier: Modifier=Modifier,
 ) {
+    val result = handlePagingResult(heroes = heroes,modifier= modifier)
+    if (result) {
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(all = SMALL_PADDING),
+            verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
+
+        ) {
+            items(
+                count = heroes.itemCount,
+                key = { index -> heroes[index]?.id ?: index }
+            ) { index ->
+                val hero = heroes[index]
+                if (hero != null) {
+                    HeroItem(hero = hero, navController = navController)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun handlePagingResult(
+    heroes: LazyPagingItems<Hero>,
+    modifier: Modifier
+    ): Boolean {
+    heroes.apply {
+        val error = when {
+            loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+            loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+            loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+            else -> null
+        }
+        return when {
+            loadState.refresh is LoadState.Loading -> {
+                ShimmerEffect()
+                false
+            }
+
+            error != null -> {
+                false
+            }
+
+
+            else -> true
+        }
+    }
 
 }
 
-@ExperimentalCoilApi
+
 @Composable
 fun HeroItem(
     hero: Hero,
@@ -69,7 +121,11 @@ fun HeroItem(
             },
         contentAlignment = Alignment.BottomStart
     ) {
-        Surface(shape = Shapes().large) {
+        Surface(
+            shape = RoundedCornerShape(
+                size = LARGE_PADDING
+            )
+        ) {
             Image(
                 modifier = Modifier.fillMaxSize(),
                 painter = painter,
@@ -80,7 +136,7 @@ fun HeroItem(
         }
         Surface(
             modifier = Modifier
-                .fillMaxHeight(0.4f)
+                .fillMaxHeight(0.45f)
                 .fillMaxWidth(),
             color = Color.Black.copy(alpha = 0.45f),
             shape = RoundedCornerShape(
@@ -129,6 +185,7 @@ fun HeroItem(
 
     }
 }
+
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 @Preview
@@ -150,9 +207,10 @@ fun HeroItemPreview() {
         navController = NavHostController(context = androidx.compose.ui.platform.LocalContext.current)
     )
 }
+
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-@Preview(uiMode= Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun HeroItemDarkPreview() {
     HeroItem(
         hero = Hero(

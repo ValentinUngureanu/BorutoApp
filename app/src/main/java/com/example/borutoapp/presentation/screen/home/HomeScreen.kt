@@ -1,12 +1,16 @@
 package com.example.borutoapp.presentation.screen.home
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil.annotation.ExperimentalCoilApi
 import com.example.borutoapp.presentation.common.ListContent
 
+@ExperimentalCoilApi
 @Composable
 fun HomeScreen(
     navController: NavHostController,
@@ -17,10 +21,11 @@ fun HomeScreen(
         topBar = {
             HomeTopBar(onSearchClicked = {})
         },
-        content = {
+        content = { innerPadding ->
             ListContent(
                 heroes = allHeroes,
-                navController = navController
+                navController = navController,
+                modifier = Modifier.padding(innerPadding)
             )
         }
     )

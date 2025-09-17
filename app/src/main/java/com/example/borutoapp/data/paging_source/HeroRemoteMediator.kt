@@ -50,7 +50,7 @@ class HeroRemoteMediator @Inject constructor(
                 }
             }
             val response = borutoApi.getAllHeroes(page = page)
-            if (response.heroes.isEmpty()) {
+            if (response.heroes.isNotEmpty()) {
                 borutoDataBase.withTransaction {
                     if (loadType == LoadType.REFRESH) {
                         heroDao.deleteAllHeroes()
