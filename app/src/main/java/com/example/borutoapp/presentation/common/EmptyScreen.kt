@@ -1,6 +1,5 @@
 package com.example.borutoapp.presentation.common
 
-import android.R.id.message
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -10,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,23 +30,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import com.example.borutoapp.R
+import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.ui.theme.DarkGray
 import com.example.borutoapp.ui.theme.LightGray
 import com.example.borutoapp.ui.theme.NETWORK_ERROR_ICON_HEIGHT
 import com.example.borutoapp.ui.theme.SMALL_PADDING
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 @Composable
-fun EmptyScreen(error: LoadState.Error? = null) {
+fun EmptyScreen(
+    error: LoadState.Error? = null,
+    heroes: LazyPagingItems<Hero>? = null,
+) {
+
     var message by remember {
         mutableStateOf("Find your favorite hero!")
     }
     var icon by remember {
         mutableStateOf(R.drawable.ic_search_document)
     }
-    if(error != null){
+    if (error != null) {
         message = parseErrorMessage(error)
         icon = R.drawable.ic_network_error
     }
@@ -61,38 +70,64 @@ fun EmptyScreen(error: LoadState.Error? = null) {
         startAnimation = true
     }
 
-    EmptyContent(alphaAnim = alphaAnim, icon = icon, message = message)
+    EmptyContent(
+        alphaAnim = alphaAnim,
+        icon = icon,
+        message = message,
+        heroes = heroes,
+        error = error,
+
+        )
 }
 
 @Composable
-fun EmptyContent(alphaAnim: Float, icon: Int, message: String) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+fun EmptyContent(
+    alphaAnim: Float,
+    icon: Int,
+    message: String,
+    heroes: LazyPagingItems<Hero>? = null,
+    error: LoadState.Error? = null,
+) {
+    var isRefreshing by remember { mutableStateOf(false) }
+    SwipeRefresh(
+        swipeEnabled = error != null,
+        state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+        onRefresh = {
+            isRefreshing = true
+            heroes?.refresh()
+            isRefreshing = false
+        }
     ) {
-        Column(
+        Surface(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            color = MaterialTheme.colorScheme.background
         ) {
-            Icon(
+            Column(
                 modifier = Modifier
-                    .size(NETWORK_ERROR_ICON_HEIGHT)
-                    .alpha(alpha = alphaAnim),
-                painter = painterResource(id = icon),
-                contentDescription = stringResource(R.string.network_error_icon),
-                tint = if (isSystemInDarkTheme()) LightGray else DarkGray
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = SMALL_PADDING)
-                    .alpha(alpha = alphaAnim),
-                text = message,
-                color = if (isSystemInDarkTheme()) LightGray else DarkGray,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize
-            )
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(NETWORK_ERROR_ICON_HEIGHT)
+                        .alpha(alpha = alphaAnim),
+                    painter = painterResource(id = icon),
+                    contentDescription = stringResource(R.string.network_error_icon),
+                    tint = if (isSystemInDarkTheme()) LightGray else DarkGray
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(top = SMALL_PADDING)
+                        .alpha(alpha = alphaAnim),
+                    text = message,
+                    color = if (isSystemInDarkTheme()) LightGray else DarkGray,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                )
+            }
         }
     }
 }

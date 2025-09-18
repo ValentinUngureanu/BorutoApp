@@ -86,6 +86,9 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.9.0")
 
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.34.0")
+
+
 
     // Room
     implementation("androidx.room:room-runtime:2.7.1")
@@ -103,7 +106,7 @@ dependencies {
 
     // Paging
     implementation("androidx.paging:paging-runtime:3.3.2")
-    implementation("androidx.paging:paging-compose:3.3.2")   
+    implementation("androidx.paging:paging-compose:3.3.2")
 
 
     // DataStore
