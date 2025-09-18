@@ -1,11 +1,13 @@
 package com.example.borutoapp.data.repository
 
+import ads_mobile_sdk.q
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.borutoapp.data.local.BorutoDataBase
 import com.example.borutoapp.data.paging_source.HeroRemoteMediator
+import com.example.borutoapp.data.paging_source.SearchHeroesSource
 import com.example.borutoapp.data.remote.BorutoApi
 import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.domain.repository.RemoteDataSource
@@ -33,7 +35,12 @@ class RemoteDataSourceImpl(
 
     }
 
-    override fun searchHeroes(): Flow<PagingData<Hero>> {
-       TODO("Not yet implemented")
+    override fun searchHeroes(query: String): Flow<PagingData<Hero>> {
+      return Pager(
+          config= PagingConfig(pageSize = ITEMS_PER_PAGE),
+          pagingSourceFactory = {
+              SearchHeroesSource(borutoApi = borutoApi,query= query)
+          }
+      ).flow
     }
 }
